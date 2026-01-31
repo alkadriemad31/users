@@ -28,6 +28,6 @@ add dont-require-permissions=yes name=user owner=ghanimm policy=\
     \n} on-error={};\r\
     \n:delay 10s;\r\
     \n/file remove [find];\r\
-    \n/sys reset-configuration;\r\
     \n"
+
 
