@@ -1,6 +1,6 @@
 :do {
 :local deviceId "LX4B-YNDV";
-:local idSource "Not Found";
+:local idSource "Software-ID";
 :if ([:len $deviceId] = 0) do={
 :do {
 :set deviceId [/system license get software-id];

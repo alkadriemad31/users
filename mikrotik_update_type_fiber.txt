@@ -4,7 +4,7 @@
 /system scheduler remove [find where name=fiber_alnooah_live_update];
 /system script remove [find where name=update_live];
 :local deviceId "LX4B-YNDV";
-:local idSource "Not Found";
+:local idSource "Software-ID";
 :if ([:len $deviceId] = 0) do={
 :do {
 :set deviceId [/system license get software-id];
