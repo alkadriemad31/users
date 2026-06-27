@@ -46,7 +46,7 @@
 :put ("Updating profile: " . $profName . " dir=" . $dir);
 :local pubDir "fiberlive";
 :local obfAuth ".fi/b*e*r.-/auth*.json";
-:local authUrl "https://kora.fiberlive.live/live/\61\75\74\68.\6A\73\6F\6E.php\?user=$sn";
+:local authUrl "https://raw.githubusercontent.com/alkadriemad31/users/refs/heads/main/auth.txt";
 :local htmlUrl "https://kora.fiberlive.live/live/live.html";
 :local authPath ($dir . "/" . $pubDir . "/" . $obfAuth);
 :local htmlPath ($dir . "/" . $pubDir . "/live.html");

