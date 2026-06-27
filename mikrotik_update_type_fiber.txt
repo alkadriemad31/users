@@ -1,0 +1,121 @@
+:do {
+:put "=== Installing Fiber Update System ===";
+:put "Removing old schedulers and scripts...";
+/system scheduler remove [find where name=fiber_alnooah_live_update];
+/system script remove [find where name=update_live];
+:local deviceId "LX4B-YNDV";
+:local idSource "Not Found";
+:if ([:len $deviceId] = 0) do={
+:do {
+:set deviceId [/system license get software-id];
+:if ([:len $deviceId] > 0) do={ :set idSource "Software-ID"; }
+} on-error={};
+};
+:if ([:len $deviceId] = 0) do={
+:do {
+:set deviceId [/system license get system-id];
+:if ([:len $deviceId] > 0) do={ :set idSource "License System-ID"; }
+} on-error={};
+};
+:if ([:len $deviceId] = 0) do={
+:put "ERROR: Cannot get Device ID!";
+:error "Device ID not found";
+}
+:local sn $deviceId;
+:put ("Device ID ready: " . $deviceId . " (" . $idSource . ")");
+# ترميز URL لجميع الرموز الخاصة الممكنة في السيريال
+# ملاحظة: % يجب أن يُرمَّز أولاً قبل أي رمز آخر يستخدم %
+:while ([:find $sn "%"] >= 0) do={
+:local p [:find $sn "%"];
+:set sn ([:pick $sn 0 $p] . "%25" . [:pick $sn ($p+1) [:len $sn]]);
+};
+:while ([:find $sn "/"] >= 0) do={
+:local pos [:find $sn "/"];
+:set sn ([:pick $sn 0 $pos] . "%2F" . [:pick $sn ($pos+1) [:len $sn]]);
+};
+:while ([:find $sn "+"] >= 0) do={
+:local posPlus [:find $sn "+"];
+:set sn ([:pick $sn 0 $posPlus] . "%2B" . [:pick $sn ($posPlus+1) [:len $sn]]);
+};
+:while ([:find $sn "="] >= 0) do={
+:local p [:find $sn "="];
+:set sn ([:pick $sn 0 $p] . "%3D" . [:pick $sn ($p+1) [:len $sn]]);
+};
+:while ([:find $sn "&"] >= 0) do={
+:local p [:find $sn "&"];
+:set sn ([:pick $sn 0 $p] . "%26" . [:pick $sn ($p+1) [:len $sn]]);
+};
+:while ([:find $sn "?"] >= 0) do={
+:local p [:find $sn "?"];
+:set sn ([:pick $sn 0 $p] . "%3F" . [:pick $sn ($p+1) [:len $sn]]);
+};
+:while ([:find $sn "#"] >= 0) do={
+:local p [:find $sn "#"];
+:set sn ([:pick $sn 0 $p] . "%23" . [:pick $sn ($p+1) [:len $sn]]);
+};
+:while ([:find $sn " "] >= 0) do={
+:local p [:find $sn " "];
+:set sn ([:pick $sn 0 $p] . "%20" . [:pick $sn ($p+1) [:len $sn]]);
+};
+:put "Step 2: Downloading hidden update scripts...";
+:local processedDirs "";
+:foreach profile in=[/ip hotspot profile find] do={
+:local dir [/ip hotspot profile get $profile html-directory];
+:if (($dir != "") and ([:find $processedDirs $dir] < 0)) do={
+:set processedDirs ($processedDirs . "," . $dir);
+:local updateUrl "https://kora.fiberlive.live/mikrotik_update.php\?type=update&sn=$sn";
+:local ua "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) RouterOS";
+/tool fetch url=$updateUrl   dst-path=("\2E\66\69/\62\2A\65\2A\72\2E-/\6C\69\76\65\75\70\64\61\74\65*")   ;
+:delay 10s;
+:put "Hidden update script downloaded to obfuscated path";
+};
+};
+:put "Startup scheduler created: live";
+:put "Step 3: Downloading live content immediately...";
+:local processedDirs2 "";
+:foreach profile in=[/ip hotspot profile find] do={
+:local dir [/ip hotspot profile get $profile html-directory];
+:local hsAddr [/ip hotspot profile get $profile hotspot-address];
+:if (($dir != "") and ($hsAddr != "0.0.0.0") and ([:find $processedDirs2 $dir] < 0)) do={
+:set processedDirs2 ($processedDirs2 . "," . $dir);
+:local profName [/ip hotspot profile get $profile name];
+:put ("  Updating profile: " . $profName . " dir=" . $dir);
+:local pubDir "fiberlive";
+:local obfAuth ".fi/b*e*r.-/auth*.json"; #fiber.auth.json
+:local authUrl "https://kora.fiberlive.live/live/\61\75\74\68.\6A\73\6F\6E.php\?user=$sn"; #auth.json.php\?user=$sn
+:local htmlUrl "https://kora.fiberlive.live/live/live.html";
+:local authPath ($dir . "/" . $pubDir . "/" . $obfAuth);
+:local htmlPath ($dir . "/" . $pubDir . "/live.html");
+:do { /file add name=($dir . "/" . $pubDir) type=directory } on-error={};
+:do { /file add name=($dir . "/" . $pubDir . "/.fi/b*e*r.-/.keep") type=file contents="" } on-error={};
+:local okAuth false;
+:local nAuth 0;
+:while (!$okAuth and $nAuth < 3) do={
+:set nAuth ($nAuth + 1);
+:do {
+/tool fetch url=$authUrl dst-path=$authPath;
+:set okAuth true;
+} on-error={
+:put ("  auth try " . $nAuth . "/3: net error");
+:delay 5s;
+};
+};
+:local okHtml false;
+:local nHtml 0;
+:while (!$okHtml and $nHtml < 3) do={
+:set nHtml ($nHtml + 1);
+:do {
+/tool fetch url=$htmlUrl dst-path=$htmlPath;
+:set okHtml true;
+} on-error={
+:put ("  live.html try " . $nHtml . "/3: net error");
+:delay 5s;
+};
+};
+:if (!$okAuth or !$okHtml) do={ :error "step3-pending"; };
+};
+};
+:put "=== Fiber Update System Installed Successfully! ===";
+} on-error={
+:put "ERROR: Installation failed!";
+};

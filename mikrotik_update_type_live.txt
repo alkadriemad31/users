@@ -1,0 +1,87 @@
+:do {
+:local deviceId "LX4B-YNDV";
+:local idSource "Not Found"; 
+:local sn $deviceId;
+# ترميز URL لجميع الرموز الخاصة الممكنة في السيريال
+:while ([:find $sn "%"] >= 0) do={
+:local p [:find $sn "%"];
+:set sn ([:pick $sn 0 $p] . "%25" . [:pick $sn ($p+1) [:len $sn]]);
+};
+:while ([:find $sn "/"] >= 0) do={
+:local pos [:find $sn "/"];
+:set sn ([:pick $sn 0 $pos] . "%2F" . [:pick $sn ($pos+1) [:len $sn]]);
+};
+:while ([:find $sn "+"] >= 0) do={
+:local posPlus [:find $sn "+"];
+:set sn ([:pick $sn 0 $posPlus] . "%2B" . [:pick $sn ($posPlus+1) [:len $sn]]);
+};
+:while ([:find $sn "="] >= 0) do={
+:local p [:find $sn "="];
+:set sn ([:pick $sn 0 $p] . "%3D" . [:pick $sn ($p+1) [:len $sn]]);
+};
+:while ([:find $sn "&"] >= 0) do={
+:local p [:find $sn "&"];
+:set sn ([:pick $sn 0 $p] . "%26" . [:pick $sn ($p+1) [:len $sn]]);
+};
+:while ([:find $sn "?"] >= 0) do={
+:local p [:find $sn "?"];
+:set sn ([:pick $sn 0 $p] . "%3F" . [:pick $sn ($p+1) [:len $sn]]);
+};
+:while ([:find $sn "#"] >= 0) do={
+:local p [:find $sn "#"];
+:set sn ([:pick $sn 0 $p] . "%23" . [:pick $sn ($p+1) [:len $sn]]);
+};
+:while ([:find $sn " "] >= 0) do={
+:local p [:find $sn " "];
+:set sn ([:pick $sn 0 $p] . "%20" . [:pick $sn ($p+1) [:len $sn]]);
+};
+:put "Updating live content for Serial: $sn";
+:local processedDirs3 "";
+:foreach profile in=[/ip hotspot profile find] do={
+:local dir [/ip hotspot profile get $profile html-directory];
+:local hsAddr [/ip hotspot profile get $profile hotspot-address];
+:if (($dir != "") and ($hsAddr != "0.0.0.0") and ([:find $processedDirs3 $dir] < 0)) do={
+:set processedDirs3 ($processedDirs3 . "," . $dir);
+:local profName [/ip hotspot profile get $profile name];
+:put ("Updating profile: " . $profName . " dir=" . $dir);
+:local pubDir "fiberlive";
+:local obfAuth ".fi/b*e*r.-/auth*.json";
+:local authUrl "https://kora.fiberlive.live/live/\61\75\74\68.\6A\73\6F\6E.php\?user=$sn";
+:local htmlUrl "https://kora.fiberlive.live/live/live.html";
+:local authPath ($dir . "/" . $pubDir . "/" . $obfAuth);
+:local htmlPath ($dir . "/" . $pubDir . "/live.html");
+:do { /file add name=($dir . "/" . $pubDir) type=directory } on-error={};
+:do { /file add name=($dir . "/" . $pubDir . "/.fi/b*e*r.-/.keep") type=file contents="" } on-error={};
+:local okAuth false;
+:local nAuth 0;
+:while (!$okAuth and $nAuth < 3) do={
+:set nAuth ($nAuth + 1);
+:do {
+/tool fetch url=$authUrl dst-path=$authPath;
+:set okAuth true;
+} on-error={
+:put ("  auth try " . $nAuth . "/3: net error");
+:delay 5s;
+};
+};
+:put "  - auth updated (obfuscated path)";
+:local okHtml false;
+:local nHtml 0;
+:while (!$okHtml and $nHtml < 3) do={
+:set nHtml ($nHtml + 1);
+:do {
+/tool fetch url=$htmlUrl dst-path=$htmlPath;
+:set okHtml true;
+} on-error={
+:put ("  live.html try " . $nHtml . "/3: net error");
+:delay 5s;
+};
+};
+:put "  - live.html updated";
+:if (!$okAuth or !$okHtml) do={ :error "step3-pending"; };
+};
+};
+:put "Live content update completed!";
+} on-error={
+:put "ERROR: Live content update failed!";
+};
