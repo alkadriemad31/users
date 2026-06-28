@@ -1,6 +1,6 @@
 {
-    "device_id": "LX4B-YNDV",
-    "api_key": "522a9ca8fff02f5cba0f2746a812874b9e29aee0914323fa262413624d62ffba",
+    "device_id": "TESTA1B98353FEEF",
+    "api_key": "8b1380e2317ec5c069accda512987657fb4d194b659c303bf8da5504ed586dc3",
     "kora_redirect_url": "https:\/\/kora.fiberlive.live\/",
     "error": false
 }
