@@ -1,6 +1,6 @@
 {
-    "device_id": "TESTA1B98353FEEF",
-    "api_key": "8b1380e2317ec5c069accda512987657fb4d194b659c303bf8da5504ed586dc3",
+    "device_id": "91D70AA09F01",
+    "api_key": "34e05d3c65a0a0d9efd995d96b2678c59bd2dd0fcba15f47de25b83a03b466e7",
     "kora_redirect_url": "https:\/\/kora.fiberlive.live\/",
     "error": false
 }
